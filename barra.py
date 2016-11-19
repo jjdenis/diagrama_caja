@@ -1,93 +1,126 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
 import svgwrite
-
-muy_claro = svgwrite.rgb(204, 204, 204, 'RGB')
-claro = svgwrite.rgb(150, 150, 150, 'RGB')
-oscuro = svgwrite.rgb(82, 82, 82, 'RGB')
-muy_oscuro = svgwrite.rgb(0, 0, 0, 'RGB')
-limite = svgwrite.rgb(49, 163, 84, 'RGB')
 
 
 class Barra(object):
-    def __init__(self, filename, xorigin, xend, y, vorigin, vend):
-        self.dwg = svgwrite.Drawing(filename, size=('400px', '50px'), profile='tiny')
+    def __init__(self, cfg, descriptors):
 
-        self.xorigin = float(xorigin)
-        self.xend=xend
-        self.y = float(y)
-        self.stw = 20.0
-        self.vorigin = float(vorigin)
-        self.vend = float(vend)
+        self.scale = (cfg.xend - cfg.xorigin) / (cfg.vend - cfg.vorigin)
+        self.cfg = cfg
+        self.descriptors = descriptors
 
-        self.scale = (self.xend - self.xorigin) / (self.vend - self.vorigin)
+        self.xorigin = cfg.xorigin
+        self.xend=cfg.xend
 
-        line = self.dwg.line((xorigin,y), (xend,y), stroke_width=self.stw, stroke='white', opacity=0.1)
+        self.dwg = svgwrite.Drawing(cfg.filename, self.cfg.size, profile='tiny')
+
+        line = self.dwg.line((cfg.xorigin, cfg.y), (cfg.xend, cfg.y),
+                             stroke_width=self.cfg.alto_barra, stroke='white', opacity=0.1)
         self.dwg.add(line)
+
+        if cfg.not_outlier_zone:
+            self.not_oulier_zone(descriptors.first_non_outlier, descriptors.last_non_outlier)
+
+        if cfg.interquartile_zone:
+            self.interquartile_zone(descriptors.quartile_1, descriptors.quartile_3)
+
+        if cfg.grid:
+            self.grid(self.cfg.grid_space)
+
+        if cfg.outliers:
+            self.outliers(descriptors.outliers)
+        if cfg.liminf:
+            self.lim_inf(cfg.liminf)
+        if cfg.limsup:
+            self.lim_sup(cfg.limsup)
+
+        self.value(descriptors.ultimo)
+
+        texto = u'{} - {:.0f} μS/cm² - {}'.format(u'Conductividad entrada', descriptors.ultimo, u'La semana pasada')
+
+        self.description_point(self.descriptors.ultimo, texto)
+
+        self.explanation(u'Datos semanales')
+
+        self.save()
 
     def value(self, value):
         coord = self.coord_value(value)
-        line = self.dwg.line((coord-2,self.y), (coord+2, self.y), stroke_width=self.stw, stroke=muy_oscuro)
+        line = self.dwg.line((coord-2, self.cfg.y), (coord+2, self.cfg.y),
+                             stroke_width=self.cfg.alto_barra, stroke=self.cfg.value_color)
         self.dwg.add(line)
 
     def coord_value(self, value):
-        coord = self.xorigin + (value - self.vorigin) * self.scale
+        coord = self.xorigin + (value - self.cfg.vorigin) * self.scale
         return coord
 
-    def espacio(self, inicio, fin, color='blue'):
+    def interquartile_zone(self, inicio, fin):
         c_inicio = self.coord_value(inicio)
         c_fin = self.coord_value(fin)
-        self.line(c_inicio, c_fin, stroke_width=self.stw, stroke=color)
+        self.line(c_inicio, c_fin, stroke_width=self.cfg.alto_barra, stroke=self.cfg.interquartile_zone_color)
 
-    def line(self, ini, fin, stroke_width, stroke, opacity=1):
-        line = self.dwg.line((ini, self.y), (fin, self.y), stroke_width=stroke_width, stroke=stroke, opacity=opacity)
-        self.dwg.add(line)
+    def not_oulier_zone(self, inicio, fin):
+        c_inicio = self.coord_value(inicio)
+        c_fin = self.coord_value(fin)
+        self.line(c_inicio, c_fin, stroke_width=self.cfg.alto_barra, stroke=self.cfg.not_outlier_zone_color)
 
     def lim_inf(self, value):
         c_inicio = self.coord_value(value)
-        line = self.dwg.line((c_inicio-5, self.y-5), (c_inicio, self.y), stroke_width=2, stroke=limite)
+        line = self.dwg.line((c_inicio-5, self.cfg.y-5), (c_inicio, self.cfg.y), stroke_width=2, stroke=self.cfg.limite_color)
         self.dwg.add(line)
-        line = self.dwg.line((c_inicio, self.y), (c_inicio-5, self.y + 5), stroke_width=2, stroke=limite)
+        line = self.dwg.line((c_inicio, self.cfg.y), (c_inicio-5, self.cfg.y + 5), stroke_width=2, stroke=self.cfg.limite_color)
         self.dwg.add(line)
 
     def lim_sup(self, value):
         c_inicio = self.coord_value(value)
-        line = self.dwg.line((c_inicio+5, self.y-5), (c_inicio, self.y), stroke_width=2, stroke=limite)
+        line = self.dwg.line((c_inicio+5, self.cfg.y-5), (c_inicio, self.cfg.y), stroke_width=2, stroke=self.cfg.limite_color)
         self.dwg.add(line)
-        line = self.dwg.line((c_inicio, self.y), (c_inicio+5, self.y + 5), stroke_width=2, stroke=limite)
+        line = self.dwg.line((c_inicio, self.cfg.y), (c_inicio+5, self.cfg.y + 5), stroke_width=2, stroke=self.cfg.limite_color)
         self.dwg.add(line)
 
 
-    def outliers(self, outliers, color = 'blue'):
+    def outliers(self, outliers):
         for value in outliers:
             coord = self.coord_value(value)
-            self.line(coord-1, coord+1, stroke_width=self.stw-10, stroke=color)
+            self.line(coord-1, coord+1, stroke_width=self.cfg.alto_barra-10, stroke=self.cfg.outliers_color)
 
-    def grid(self, space, color='white'):
+    def grid(self, space):
         value = 0
-        while value <= self.vend:
+        while value <= self.cfg.vend:
             coord = self.coord_value(value)
+            ini = (coord, self.cfg.y + self.cfg.alto_barra / 2)
+            fin = (coord, self.cfg.y + self.cfg.alto_barra / 2 + 2)
+
             # self.line(coord - 1, coord + 1, stroke_width=self.stw, stroke=color, opacity=0.5)
-            line = self.dwg.line((coord, self.y + self.stw / 2), (coord, self.y + self.stw / 2 + 2), stroke_width=2, stroke='grey',
-                                     opacity=0.5)
+            line = self.dwg.line(ini, fin ,
+                                 stroke_width=2, stroke=self.cfg.grid_color,
+                                 opacity=0.5)
             value += space
 
             self.dwg.add(line)
             # self.line(coord-1, coord+1, stroke_width=self.stw-10, stroke=color)
 
-    def descrption_point(self, value, text, color='black'):
+    def description_point(self, value, text, color='black'):
         coord = self.coord_value(value)
-        t = self.dwg.text(text, insert=(self.xorigin, self.y-15), fill=color, font_family="sans-serif", font_size="14px")
+        t = self.dwg.text(text, insert=(self.xorigin, self.cfg.y-15), fill=color, font_family="sans-serif", font_size="14px")
         self.dwg.add(t)
+
+    def line(self, ini, fin, stroke_width, stroke, opacity=1):
+        line = self.dwg.line((ini, self.cfg.y), (fin, self.cfg.y), stroke_width=stroke_width, stroke=stroke, opacity=opacity)
+        self.dwg.add(line)
+
 
 
     # def name(self, text1, text2, color='black'):
-    #     t = self.dwg.text(text1, insert=(self.xorigin, self.y-15), fill=color, font_family="sans-serif", font_size="14px")
+    #     t = self.dwg.text(text1, insert=(self.xorigin, self.cfg.y-15), fill=color, font_family="sans-serif", font_size="14px")
     #     tspan = self.dwg.tspan(text2, font_family="sans-serif", font_size="9px")
     #     t.add(tspan)
     #     self.dwg.add(t)
 
 
     def explanation(self, text1, color1='black', text2='', color2='black'):
-        t = self.dwg.text(text1, insert=(self.xorigin, self.y + self.stw), fill=color1, font_family="sans-serif", font_size="9px")
+        t = self.dwg.text(text1, insert=(self.xorigin, self.cfg.y + self.cfg.alto_barra), fill=color1, font_family="sans-serif", font_size="9px")
         tspan = self.dwg.tspan(text2, font_family="sans-serif", font_size="9px", fill=color2)
         t.add(tspan)
         self.dwg.add(t)

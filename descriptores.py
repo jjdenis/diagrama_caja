@@ -1,5 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 class Descriptors(object):
     def __init__(self, values):
+        self.values = values
         self.maximo = max(values)
         self.ultimo = values[-1]
 
