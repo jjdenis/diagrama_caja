@@ -8,11 +8,10 @@ import webbrowser
 from dateutil.relativedelta import relativedelta
 
 from src.barra import Barra
+from src.config import Colores, ConfigBarra
+from src.descriptores import Descriptors
 from src.html import Html
 from src.spark import graph
-
-from config import Colores, ConfigBarra
-from src.descriptores import Descriptors
 
 
 def main():
