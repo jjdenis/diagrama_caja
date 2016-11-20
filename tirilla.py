@@ -1,20 +1,18 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
+import datetime
 import math
 import random
 import webbrowser
-
-from barra import Barra
-from config import Colores, ConfigBarra
-from descriptores import Descriptors
-from html import Html
-from spark import graph
-
-grid_color = '#F2F2F2'
-
 from dateutil.relativedelta import relativedelta
-import datetime
+
+from src.barra import Barra
+from src.html import Html
+from src.spark import graph
+
+from config import Colores, ConfigBarra
+from src.descriptores import Descriptors
 
 
 def main():
@@ -34,59 +32,75 @@ def main():
     aleatorios[0] = 5
     aleatorios[1]=105
 
-    pinta_y_genera_html(aleatorios, dates, gen_filename, html)
+    colores = Colores()
+    config = ConfigBarra(colores=colores)
+
+    fn1, fn2 = gen_filename.gen_two()
+    config.cambia(vmax=4000, liminf=500, limsup=3000)
+    pinta_barra_y_spark(dates, aleatorios, fn1, fn2, config)
+    html.add_line(fn1, fn2)
 
     crece_lineal = [i*3000/100. for i, d in enumerate(dates)]
-    pinta_y_genera_html(crece_lineal, dates, gen_filename, html)
+    fn1, fn2 = gen_filename.gen_two()
+    cf1 = config.nueva(vmax=6000)
+    pinta_barra_y_spark(dates, crece_lineal, fn1, fn2, cf1)
+    html.add_line(fn1, fn2)
+
+    crece_lineal = [i*3000/100. for i, d in enumerate(dates)]
+    fn1, fn2 = gen_filename.gen_two()
+    pinta_barra_y_spark(dates, crece_lineal, fn1, fn2, config)
+    html.add_line(fn1, fn2)
 
     values = [2000+math.cos(d)*500. for d in crece_lineal]
-    pinta_y_genera_html(values, dates, gen_filename, html)
+    fn1, fn2 = gen_filename.gen_two()
+    pinta_barra_y_spark(dates, values, fn1, fn2, config)
+    html.add_line(fn1, fn2)
 
     values = [2000+math.cos(d)*1500.*math.exp(-d/1000.) for d in crece_lineal]
-    pinta_y_genera_html(values, dates, gen_filename, html)
+    fn1, fn2 = gen_filename.gen_two()
+    pinta_barra_y_spark(dates, values, fn1, fn2, config)
+    html.add_line(fn1, fn2)
 
     values = [2000+math.cos(d)*1500.*math.exp(-d/1000.) for d in reversed(crece_lineal)]
-    pinta_y_genera_html(values, dates, gen_filename, html)
+    fn1, fn2 = gen_filename.gen_two()
+    pinta_barra_y_spark(dates, values, fn1, fn2, config)
+    html.add_line(fn1, fn2)
 
     values = [a + c for a, c in zip(aleatorios, crece_lineal)]
-    pinta_y_genera_html(values, dates, gen_filename, html)
+    fn1, fn2 = gen_filename.gen_two()
+    pinta_barra_y_spark(dates, values, fn1, fn2, config)
+    html.add_line(fn1, fn2)
 
     html.crea_html()
     webbrowser.open_new_tab('prueba.html')
 
 
-def pinta_y_genera_html(aleatorios, dates, gen_filename, html):
-
-    filename1 = gen_filename.next()
-    crea_barra(aleatorios, filename1)
-
-    filename2 = gen_filename.next()
-    graph(dates, aleatorios, filename2)
-
-
-    html.add_line(filename1, filename2)
-
-
-
-def crea_barra(values, filename):
+def pinta_barra_y_spark(dates, values, fn1, fn2, config, vmin=None, vmax=None, liminf=None, limsup=None):
 
     descriptors = Descriptors(values)
-    colores = Colores()
-    c= ConfigBarra(filename, colores=colores, liminf = 300, limsup=1000)
 
-    barra = Barra(cfg=c, descriptors=descriptors)
+    Barra(filename=fn1, cfg=config, descriptors=descriptors)
 
+    graph(dates, values, fn2, config)
 
 class Filename(object):
     def __init__(self):
         self.index = 0
-        self.template = 'scatter{}.{}'
+        self.template = 'images/graf_redu{}.{}'
 
-    def next(self, extension='svg'):
+    def gen_one(self, extension='svg'):
         filename = self.template.format(self.index, extension)
 
         self.index += 1
         return filename
+
+
+    def gen_two(self, extension='svg'):
+        fn1 = self.template.format(self.index, extension)
+        self.index += 1
+        fn2 = self.template.format(self.index, extension)
+        self.index += 1
+        return fn1, fn2
 
 
 main()

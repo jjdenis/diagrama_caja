@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import svgwrite
+from copy import copy
 
+
+grid_color = '#F2F2F2'
 
 class Colores():
     def __init__(self):
@@ -16,18 +19,17 @@ class Colores():
 
 
 class ConfigBarra(object):
-    def __init__(self, filename, colores, vorigin=0., vend=4000., grid=None, liminf=None, limsup=None):
-        self.filename = filename
-        self.vorigin = vorigin
-        self.vend = vend
+    def __init__(self, colores, vmin=0., vmax=4000., grid=None, liminf=None, limsup=None):
+        self.vmin = vmin
+        self.vmax = vmax
         self.grid = grid
         self.liminf = liminf
         self.limsup = limsup
-        self.xorigin= 10
-        self.xend = 500
+        self.xmin= 10
+        self.xmax = 500
         self.y = 30
         self.alto_barra = 20.0
-        self.size = ('400px', '50px')
+        self.size = ('{}px'.format(self.xmax+20), '{}px'.format(self.y+self.alto_barra))
 
         self.not_outlier_zone=True
         self.not_outlier_zone_color= colores.muy_claro
@@ -45,4 +47,16 @@ class ConfigBarra(object):
 
         self.description_point = ''
         self.explanation = ''
+        self.units = ''
 
+    def cambia(self, **kwargs):
+        for key, value in kwargs.iteritems():
+            if key in self.__dict__:
+                self.__dict__[key]=value
+            else:
+                raise ValueError('parametro {} no existe'.format(key))
+
+    def nueva(self, **kwargs):
+        new = copy(self)
+        new.cambia(**kwargs)
+        return new

@@ -9,7 +9,7 @@ import matplotlib
 from matplotlib import pyplot as plt
 
 
-def graph(dates, values, filename):
+def graph(dates, values, filename, config):
     matplotlib.rc('font', size=6,
                   #family    = 'Baskerville',
                   family='sans-serif',
@@ -20,7 +20,7 @@ def graph(dates, values, filename):
 
     ax = plt.subplot()
     set_eje_x(u'2años', ax)
-    set_eje_y(ax, 0, 4000)
+    set_eje_y(ax, config.vmin, config.vmax)
     tick_lines(ax)
     set_y_labels(ax)
     ax.plot(dates, values, alpha=1, color='black')
@@ -30,6 +30,7 @@ def graph(dates, values, filename):
     fig.canvas.print_figure(filename)
 
     return
+
 
 def set_y_labels(ax):
     labels = ax.get_yticks().tolist()
@@ -41,6 +42,7 @@ def set_y_labels(ax):
     new_labels[-1]='{:.0f}'.format(labels[-1])
     new_labels[0]='{:.0f}'.format(labels[0])
     ax.set_yticklabels(new_labels)
+
 
 def set_eje_y(ax, ymin, ymax):
     # Eje y
