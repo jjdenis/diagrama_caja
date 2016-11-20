@@ -21,7 +21,7 @@ class Html(object):
         texto = WEBPAGE.substitute(body=table,
                            estilos='estilos/graficas.css')
 
-        f = codecs.open('prueba.html', "w", "utf-8")
+        f = codecs.open('resultado.html', "w", "utf-8")
         # Aplica template
         # relative_path_to_principal = '../' * nombre_archivo.count('/')
         f.write(texto)

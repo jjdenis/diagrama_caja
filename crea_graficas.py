@@ -72,7 +72,7 @@ def main():
     html.add_line(fn1, fn2)
 
     html.crea_html()
-    webbrowser.open_new_tab('prueba.html')
+    webbrowser.open_new_tab('resultado.html')
 
 
 def pinta_barra_y_spark(dates, values, fn1, fn2, config, vmin=None, vmax=None, liminf=None, limsup=None):
