@@ -28,26 +28,28 @@ def main():
     gen_filename = Filename()
 
     aleatorios = [float(random.randint(1500, 3000)) for i in dates]
-    aleatorios[0] = 5
-    aleatorios[1]=105
+    aleatorios[0] = 5  # Un par de outliers
+    aleatorios[1] = 105
 
     colores = Colores()
     config = ConfigBarra(colores=colores)
 
     fn1, fn2 = gen_filename.gen_two()
-    config.cambia(vmax=4000, liminf=500, limsup=3000)
+    config.cambia(titulo = u'Atabal, conductividad de entrada')
+    config.cambia(vmax=4000, unidades=u'μS/cm²')
     pinta_barra_y_spark(dates, aleatorios, fn1, fn2, config)
     html.add_line(fn1, fn2)
 
     crece_lineal = [i*3000/100. for i, d in enumerate(dates)]
     fn1, fn2 = gen_filename.gen_two()
-    cf1 = config.nueva(vmax=6000)
+    cf1 = config.nueva(titulo = u'Atabal, conductividad de salida', liminf=500, limsup=3000, )
     pinta_barra_y_spark(dates, crece_lineal, fn1, fn2, cf1)
     html.add_line(fn1, fn2)
 
+    cf1 = config.nueva(titulo = u'Otra muy bonita', vmax=6000)
     crece_lineal = [i*3000/100. for i, d in enumerate(dates)]
     fn1, fn2 = gen_filename.gen_two()
-    pinta_barra_y_spark(dates, crece_lineal, fn1, fn2, config)
+    pinta_barra_y_spark(dates, crece_lineal, fn1, fn2, cf1)
     html.add_line(fn1, fn2)
 
     values = [2000+math.cos(d)*500. for d in crece_lineal]
@@ -83,6 +85,7 @@ def pinta_barra_y_spark(dates, values, fn1, fn2, config, vmin=None, vmax=None, l
     graph(dates, values, fn2, config)
 
 class Filename(object):
+
     def __init__(self):
         self.index = 0
         self.template = 'images/graf_redu{}.{}'

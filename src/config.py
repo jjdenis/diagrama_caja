@@ -20,6 +20,7 @@ class Colores():
 
 class ConfigBarra(object):
     def __init__(self, colores, vmin=0., vmax=4000., grid=None, liminf=None, limsup=None):
+        self.titulo = ''
         self.vmin = vmin
         self.vmax = vmax
         self.grid = grid
@@ -27,9 +28,9 @@ class ConfigBarra(object):
         self.limsup = limsup
         self.xmin= 10
         self.xmax = 500
-        self.y = 30
+        self.y = 30.0
         self.alto_barra = 20.0
-        self.size = ('{}px'.format(self.xmax+20), '{}px'.format(self.y+self.alto_barra))
+        self.size = ('{}px'.format(self.xmax+20), '{}px'.format(self.y+self.alto_barra / 2 + 14 + 2 + 9 + 5   ))
 
         self.not_outlier_zone=True
         self.not_outlier_zone_color= colores.muy_claro
@@ -47,14 +48,14 @@ class ConfigBarra(object):
 
         self.description_point = ''
         self.explanation = ''
-        self.units = ''
+        self.unidades = ''
 
     def cambia(self, **kwargs):
         for key, value in kwargs.iteritems():
             if key in self.__dict__:
                 self.__dict__[key]=value
             else:
-                raise ValueError('parametro {} no existe'.format(key))
+                raise ValueError('El parametro {} no existe'.format(key))
 
     def nueva(self, **kwargs):
         new = copy(self)

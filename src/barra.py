@@ -37,13 +37,20 @@ class Barra(object):
 
         self.value(descriptors.ultimo)
 
-        texto = u'{} - {:.0f} {} - {}'.format(u'Conductividad entrada', descriptors.ultimo, u'μS/cm²', u'La semana pasada')
+        # Upper label
+        texto = u'{}'.format(self.cfg.titulo)
+        if abs(self.descriptors.ultimo - self.cfg.vmax) < (self.cfg.vmax-self.cfg.vmin)*0.2:
+            text_anchor = 'end'
+            position = self.cfg.vmax
+        else:
+            text_anchor = 'middle'
+            position = self.descriptors.ultimo
+        self.label_at_value(position, texto, position = 'top', font_size="14px", text_anchor=text_anchor)
 
-        self.title(self.descriptors.ultimo, texto)
+        self.explanation(u'Datos semanales, ultimo dato la semana pasada')
 
-        self.explanation(u'Datos semanales')
-
-        self.label_value(self.cfg.vmax, '{:.0f} {}'.format(self.cfg.vmax, self.cfg.units))
+        text = u'{:.0f} {}'.format(self.descriptors.ultimo, self.cfg.unidades)
+        self.label_at_value(self.descriptors.ultimo, text, font_size="14px")
 
         self.save()
 
@@ -98,6 +105,10 @@ class Barra(object):
             line = self.dwg.line(ini, fin ,
                                  stroke_width=2, stroke=self.cfg.grid_color,
                                  opacity=0.5)
+
+            if abs(value-self.descriptors.ultimo) > self.cfg.grid_space * 1.0:
+                self.label_at_value(value, u'{:.0f}'.format(value))
+
             value += space
 
             self.dwg.add(line)
@@ -111,12 +122,16 @@ class Barra(object):
         line = self.dwg.line((ini, self.cfg.y), (fin, self.cfg.y), stroke_width=stroke_width, stroke=stroke, opacity=opacity)
         self.dwg.add(line)
 
-    def label_value(self, value, text, color='black'):
+    def label_at_value(self, value, text, color='black', font_size="9px", position='bottom', text_anchor='middle'):
+        if position == 'top':
+            y = self.cfg.y - self.cfg.alto_barra / 2 - 2
+        else:
+            y = self.cfg.y + self.cfg.alto_barra / 2 + 14
         print value, text
-        coords = (self.coord_value(value), self.cfg.y + self.cfg.alto_barra)
+        coords = (self.coord_value(value), y)
         # coords = (self.xorigin, self.cfg.y + self.cfg.alto_barra)
         print coords
-        t = self.dwg.text(text, insert=coords, fill=color, font_family="sans-serif", font_size="9px", text_anchor='middle')
+        t = self.dwg.text(text, insert=coords, fill=color, font_family="sans-serif", font_size=font_size, text_anchor=text_anchor)
         self.dwg.add(t)
 
 
@@ -128,7 +143,8 @@ class Barra(object):
 
 
     def explanation(self, text1, color1='black', text2='', color2='black'):
-        t = self.dwg.text(text1, insert=(self.xorigin, self.cfg.y + self.cfg.alto_barra), fill=color1, font_family="sans-serif", font_size="9px")
+        coords = (self.xorigin, self.cfg.y + self.cfg.alto_barra / 2 + 14 + 2 +9)
+        t = self.dwg.text(text1, insert=coords, fill=color1, font_family="sans-serif", font_size="9px")
         tspan = self.dwg.tspan(text2, font_family="sans-serif", font_size="9px", fill=color2)
         t.add(tspan)
         self.dwg.add(t)
