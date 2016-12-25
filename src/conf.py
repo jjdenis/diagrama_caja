@@ -1,26 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import svgwrite
 from copy import copy
 import json
-
-
-grid_color = '#F2F2F2'
-
-class Colores():
-    def __init__(self):
-
-        self.muy_claro = svgwrite.rgb(240, 240, 240, 'RGB')
-        self.claro = svgwrite.rgb(217, 217, 217, 'RGB')
-        self.oscuro = svgwrite.rgb(82, 82, 82, 'RGB')
-        self.muy_oscuro = svgwrite.rgb(0, 0, 0, 'RGB')
-
-        self.limite = svgwrite.rgb(49, 163, 84, 'RGB')
-
+import pprint
 
 class ConfigBarra(object):
-    def __init__(self, colores, vmin=0., vmax=4000., grid=None, liminf=None, limsup=None):
+    def __init__(self, vmin=0., vmax=4000., grid=None, liminf=None, limsup=None):
         self.titulo = ''
         self.vmin = vmin
         self.vmax = vmax
@@ -31,29 +17,31 @@ class ConfigBarra(object):
         self.xmax = 500
         self.y = 30.0
         self.alto_barra = 20.0
-        self.size = ('{}px'.format(self.xmax+20), '{}px'.format(self.y+self.alto_barra / 2 + 14 + 2 + 9 + 5   ))
+        self.width = self.xmax+20
+        self.height = self.y + self.alto_barra / 2 + 14 + 2 + 9 + 5
 
+        self.value_width = 2
         self.not_outlier_zone=True
-        self.not_outlier_zone_color= colores.muy_claro
+        self.not_outlier_zone_color= (240, 240, 240)  # muy claro
 
         self.interquartile_zone=True
-        self.interquartile_zone_color = colores.claro
+        self.interquartile_zone_color = (217, 217, 217) # claro
 
         self.grid=True
-        self.grid_color=colores.oscuro
+        self.grid_color=(82, 82, 82)  # oscuro
         self.grid_space = 500
         self.outliers=True
-        self.outliers_color=colores.muy_claro
-        self.limite_color = colores.limite
-        self.value_color = colores.muy_oscuro
+        self.outliers_color=(240, 240, 240)  # muy claro
+        self.limite_color = (49, 163, 84) # verdoso
+        self.value_color = (0, 0, 0)  # negro
 
         self.description_point = ''
         self.explanation = ''
         self.unidades = ''
 
-        self.json = json.dumps(self.__dict__)
-
+        self.json = json.dumps(self.__dict__, indent=4)
         print self.json
+
 
     def cambia(self, **kwargs):
         for key, value in kwargs.iteritems():

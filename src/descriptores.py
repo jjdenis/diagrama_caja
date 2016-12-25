@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+
 class Descriptors(object):
     def __init__(self, values):
         self.values = values
@@ -32,3 +34,7 @@ class Descriptors(object):
         self.last_non_outlier = next(v for v in reversed(values) if v < self.upper_regular_range)
 
         self.outliers = [v for v in values if v < self.lower_regular_range or v > self.upper_regular_range]
+
+        self.json = json.dumps(self.__dict__)
+
+        print self.json

@@ -12,6 +12,7 @@ from src.config import Colores, ConfigBarra
 from src.descriptores import Descriptors
 from src.html import Html
 from src.spark import graph
+import src.conf
 
 
 def main():
@@ -33,12 +34,14 @@ def main():
 
     colores = Colores()
     config = ConfigBarra(colores=colores)
-
+    cfg = src.conf.ConfigBarra()
     fn1, fn2 = gen_filename.gen_two()
     config.cambia(titulo = u'Atabal, conductividad de entrada')
     config.cambia(vmax=4000, unidades=u'μS/cm²')
     pinta_barra_y_spark(dates, aleatorios, fn1, fn2, config)
     html.add_line(fn1, fn2)
+
+    print Juanjo
 
     crece_lineal = [i*3000/100. for i, d in enumerate(dates)]
     fn1, fn2 = gen_filename.gen_two()
