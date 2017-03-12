@@ -23,7 +23,7 @@ def graph(dates, values, filename, config):
     set_eje_y(ax, config.vmin, config.vmax)
     tick_lines(ax)
     set_y_labels(ax)
-    ax.plot(dates, values, alpha=1, color='black')
+    ax.plot(dates, values, alpha=1, color='#1f78b4')
     # ax.set_axis_off()
 
     fig.tight_layout()
@@ -34,7 +34,6 @@ def graph(dates, values, filename, config):
 
 def set_y_labels(ax):
     labels = ax.get_yticks().tolist()
-    print(labels)
     last = labels[-1]
     new_labels = []
     for label in labels:
@@ -49,13 +48,13 @@ def set_eje_y(ax, ymin, ymax):
     ax.axis(ymin=ymin, ymax=ymax)
     ax.yaxis.tick_right()
     ax.spines['left'].set_color('none')
-    ax.spines['right'].set_color('grey')
+    ax.spines['right'].set_color('#42525A')
 
 
 def set_eje_x(alcance, ax, freq=['week'], ):
     today = datetime.datetime.today()
     ax.spines['top'].set_color('none')
-    ax.spines['bottom'].set_color('grey')
+    ax.spines['bottom'].set_color('#42525A')
 
     # Eje x
     if alcance == u'2años':

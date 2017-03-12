@@ -10,12 +10,32 @@ grid_color = '#F2F2F2'
 class Colores():
     def __init__(self):
 
-        self.muy_claro = svgwrite.rgb(240, 240, 240, 'RGB')
-        self.claro = svgwrite.rgb(217, 217, 217, 'RGB')
-        self.oscuro = svgwrite.rgb(82, 82, 82, 'RGB')
-        self.muy_oscuro = svgwrite.rgb(0, 0, 0, 'RGB')
 
-        self.limite = svgwrite.rgb(49, 163, 84, 'RGB')
+        self.gris_muy_claro = svgwrite.rgb(240, 240, 240, 'RGB')
+        self.gris_claro = svgwrite.rgb(189, 189, 189, 'RGB')
+        self.gris_oscuro = svgwrite.rgb(150, 150, 150, 'RGB')
+
+        self.negro = svgwrite.rgb(0, 0, 0, 'RGB')
+
+        self.verde = svgwrite.rgb(49, 163, 84, 'RGB')
+
+        self.azul_oscuro = svgwrite.rgb(166, 206, 227, 'RGB') #e5f5f9
+        self.azul_claro = svgwrite.rgb(192, 220, 235, 'RGB')
+        self.azul_muy_oscuro = svgwrite.rgb(66, 82, 90, 'RGB')
+
+
+
+        self.verde_claro = svgwrite.rgb( 178, 223, 138, 'RGB') #e5f5f9
+        self.verde_oscuro = svgwrite.rgb(51, 160, 44, 'RGB')
+
+
+        self.muy_claro = self.gris_muy_claro
+        self.claro = self.gris_claro
+        self.oscuro = self.gris_oscuro
+        self.muy_oscuro = self.negro
+
+        self.limite = self.verde
+
 
 
 class ConfigBarra(object):
@@ -26,25 +46,39 @@ class ConfigBarra(object):
         self.grid = grid
         self.liminf = liminf
         self.limsup = limsup
-        self.xmin= 10
-        self.xmax = 500
-        self.y = 30.0
+
+        self.x_ini_barra= 10
+        self.ancho_barra = 500
+        self.x_margen_dcho =20
+
+        self.margen_superior = 20.0
         self.alto_barra = 20.0
-        self.size = ('{}px'.format(self.xmax+20), '{}px'.format(self.y+self.alto_barra / 2 + 14 + 2 + 9 + 5   ))
+        self.margen_inferior = 20
+        self.y_ini_barra = self.margen_superior
+        self.y_fin_barra = self.margen_superior + self.alto_barra
+        self.y_cen_barra = self.margen_superior + self.alto_barra / 2
 
-        self.not_outlier_zone=True
-        self.not_outlier_zone_color= colores.muy_claro
+        self.ancho_svg = self.x_ini_barra + self.ancho_barra + self.x_margen_dcho
+        self.alto_svg = self.margen_inferior + self.alto_barra +self.margen_inferior
 
-        self.interquartile_zone=True
-        self.interquartile_zone_color = colores.claro
+        self.size = ('{}px'.format(self.ancho_svg), '{}px'.format(self.alto_svg))
 
+        self.fondo_color = 'white'
+        self.tipicos_color= colores.azul_claro
+        self.intercuartil_color = colores.azul_oscuro
+        self.atipicos_color=colores.azul_oscuro
+        self.limite_color = colores.verde_oscuro
+        self.value_color = colores.verde_oscuro
+        self.titulo_color = colores.azul_muy_oscuro
+        self.grid_color=colores.azul_muy_oscuro
+        self.explicacion_color = colores.azul_muy_oscuro
+
+        self.tipicos=True
+        self.intercuartil=True
+        self.atipicos=True
         self.grid=True
-        self.grid_color=colores.oscuro
-        self.grid_space = 500
-        self.outliers=True
-        self.outliers_color=colores.muy_claro
-        self.limite_color = colores.limite
-        self.value_color = colores.muy_oscuro
+        self.grid_espaciado = 500 # Unidades de lo que sea
+        self.grid_texto_espaciado = 2
 
         self.description_point = ''
         self.explanation = ''

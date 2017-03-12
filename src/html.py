@@ -11,10 +11,16 @@ class Html(object):
         self.rows = ''
         self.pars = ''
 
-    def add_line(self, filename1, filename2):
+    def add_line1(self, filename1, filename2):
         html_svg1 = IMG.substitute(path=filename1, nombre=filename1)
         html_svg2 = IMG.substitute(path=filename2, nombre=filename2)
         par = PAR_IMAGES.substitute(fn1=html_svg1, fn2=html_svg2)
+        self.pars += '\n' + par
+
+    def add_line(self, filename1, filename2):
+        html_svg1 = IMG.substitute(path=filename1, nombre=filename1)
+        html_svg2 = IMG.substitute(path=filename2, nombre=filename2)
+        par = PAR_IMAGE.substitute(fn1=html_svg1, fn2=html_svg2)
         self.pars += '\n' + par
 
 
@@ -31,6 +37,10 @@ class Html(object):
 
 PAR_IMAGES =  Template(u"""
 <p>$fn1 $fn2</p>
+""")
+
+PAR_IMAGE =  Template(u"""
+<p>$fn1</p>
 """)
 
 
@@ -57,6 +67,12 @@ WEBPAGE = Template(u"""
 
     <!-- Mi css -->
     <link rel="stylesheet" href="$estilos"  type="text/css" />
+    <style>
+        p {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+    </style>
 
     <!-- JQuery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

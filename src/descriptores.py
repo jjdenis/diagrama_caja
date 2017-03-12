@@ -2,33 +2,36 @@
 # -*- coding: utf-8 -*-
 
 class Descriptors(object):
-    def __init__(self, values):
-        self.values = values
-        self.maximo = max(values)
-        self.ultimo = values[-1]
 
-        values = sorted(values)
-        self.length = len(values)
+    def __init__(self, valores):
 
-        self.media = sum(values) / self.length
 
-        index = int(self.length * .25)
-        self.quartile_1 = values[index]
+        self.maximo = max(valores)
 
-        index = self.length/2
-        self.median = values[index]
+        self.ultimo = valores[-1]
 
-        index = int(self.length * .75)
-        self.quartile_3 = values[index]
+        valores = sorted(valores)
+        num_valores = len(valores)
 
-        interaquartile = self.quartile_3 - self.quartile_1
+        self.media = sum(valores) / num_valores
 
-        self.lower_regular_range = self.quartile_1 - 1.5 * interaquartile
+        index = int(num_valores * .25)
+        self.quartile_1 = valores[index]
 
-        self.upper_regular_range = self.quartile_3 + 1.5 * interaquartile
+        index = num_valores / 2
+        self.mediana = valores[index]
 
-        self.first_non_outlier = next(v for v in values if v > self.lower_regular_range)
+        index = int(num_valores * .75)
+        self.quartile_3 = valores[index]
 
-        self.last_non_outlier = next(v for v in reversed(values) if v < self.upper_regular_range)
+        intercuartil = self.quartile_3 - self.quartile_1
 
-        self.outliers = [v for v in values if v < self.lower_regular_range or v > self.upper_regular_range]
+        self.lower_regular_range = self.quartile_1 - 1.5 * intercuartil
+
+        self.upper_regular_range = self.quartile_3 + 1.5 * intercuartil
+
+        self.first_non_outlier = next(v for v in valores if v > self.lower_regular_range)
+
+        self.last_non_outlier = next(v for v in reversed(valores) if v < self.upper_regular_range)
+
+        self.atipicos = [v for v in valores if v < self.lower_regular_range or v > self.upper_regular_range]
