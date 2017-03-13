@@ -47,21 +47,15 @@ class ConfigBarra(object):
         self.liminf = liminf
         self.limsup = limsup
 
-        self.x_ini_barra= 10
+        self.margen_izquierdo= 10
+        self.ancho_descrip = 500
+        self.margen_descrip_barra = 10
         self.ancho_barra = 500
-        self.x_margen_dcho =20
+        self.margen_dcho =20
 
         self.margen_superior = 20.0
         self.alto_barra = 20.0
         self.margen_inferior = 20
-        self.y_ini_barra = self.margen_superior
-        self.y_fin_barra = self.margen_superior + self.alto_barra
-        self.y_cen_barra = self.margen_superior + self.alto_barra / 2
-
-        self.ancho_svg = self.x_ini_barra + self.ancho_barra + self.x_margen_dcho
-        self.alto_svg = self.margen_inferior + self.alto_barra +self.margen_inferior
-
-        self.size = ('{}px'.format(self.ancho_svg), '{}px'.format(self.alto_svg))
 
         self.fondo_color = 'white'
         self.tipicos_color= colores.azul_claro
