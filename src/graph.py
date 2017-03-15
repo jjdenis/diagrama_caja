@@ -234,21 +234,21 @@ def paint_graph(
 
     # Rejilla (pinta los sábados y domingos más anchos, y la separación entre
     # años también)
-    ax.xaxis.grid(
+    ax.xaxis.tick(
         True, which='major', color=grid, linestyle='solid', linewidth=1)
     #ax.xaxis.grid(True, which='major', color=grid, linestyle='solid', linewidth=8)
     for fecha in rrule(YEARLY, dtstart=xmin, until=xmax)[1:]:
         ax.axvline(x=fecha, ymin=0, ymax=1, color=grid, linewidth=8)
 
     if alcance != u'2años':
-        ax.xaxis.grid(
+        ax.xaxis.tick(
             True, which='major', color=grid, alpha=0.5, linestyle='solid', linewidth=30)
-        ax.xaxis.grid(
+        ax.xaxis.tick(
             True, which='minor', color=grid, linestyle='solid', linewidth=1)
 
     #ax.xaxis.grid(True, which='minor', color=grid, linestyle='solid', linewidth=1)
 
-    ax.yaxis.grid(
+    ax.yaxis.tick(
         True, which='major', color=grid, linestyle='solid', linewidth=2)
     #ax.yaxis.grid(True, which='minor', color=grid, linestyle='solid', linewidth=1)
 

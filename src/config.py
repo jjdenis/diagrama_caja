@@ -48,8 +48,8 @@ class ConfigBarra(object):
         self.limsup = limsup
 
         self.margen_izquierdo= 10
-        self.ancho_descrip = 500
-        self.margen_descrip_barra = 10
+        self.ancho_descrip = 0
+        self.margen_descrip_barra = 0
         self.ancho_barra = 500
         self.margen_dcho =20
 

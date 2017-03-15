@@ -47,11 +47,11 @@ class Barra(object):
         self.ultimo_valor(descriptors.ultimo)
 
         if cfg.grid:
-            self.grid()
+            self.tick()
 
-        texto_titulo = u'{} - {:.0f} {} - {}'.format(self.cfg.titulo, self.descriptors.ultimo, self.cfg.unidades, 'semana pasada')
-        texto_titulo = u'{}'.format(self.cfg.titulo)
-        self.titulo(texto_titulo)
+        # texto_titulo = u'{} - {:.0f} {} - {}'.format(self.cfg.titulo, self.descriptors.ultimo, self.cfg.unidades, 'semana pasada')
+        # texto_titulo = u'{}'.format(self.cfg.titulo)
+        # self.titulo(texto_titulo)
 
         #self.explanation(u'Datos semanales, ultimo dato la semana pasada', color1=self.cfg.grid_color)
 
@@ -79,8 +79,9 @@ class Barra(object):
 
     def texto_valor(self):
         y_pos_texto = self.y_cen_barra + self.cfg.alto_barra / 2 + 14
-        text = u'{:.0f} {}'.format(self.descriptors.ultimo, self.cfg.unidades)
-        self.label_at_value(self.descriptors.ultimo, text, y_pos_texto, font_size="12px", color=self.cfg.value_color)
+        texto = u'{:.0f} {}'.format(self.descriptors.ultimo, self.cfg.unidades)
+        texto = u'{} - {:.0f} {} - {}'.format(self.cfg.titulo, self.descriptors.ultimo, self.cfg.unidades, 'semana pasada')
+        self.label_at_value(self.descriptors.ultimo, texto, y_pos_texto, font_size="12px", color=self.cfg.value_color)
 
     def titulo(self, titulo):
         # Upper label
@@ -166,7 +167,7 @@ class Barra(object):
         line = self.dwg.line((c_inicio, self.y_cen_barra), (c_inicio+5, self.y_cen_barra + 5), stroke_width=2, stroke=self.cfg.limite_color)
         self.dwg.add(line)
 
-    def grid(self):
+    def tick2(self):
         value = 0
 
         y_pos_tick = self.y_fin_barra + 3
@@ -176,6 +177,7 @@ class Barra(object):
         i = 0
 
         while value <= self.cfg.vmax:
+
             cubre_valor = abs(value-self.descriptors.ultimo) < self.cfg.grid_espaciado * 1.0
 
             toca_texto = i % self.cfg.grid_texto_espaciado == 0
@@ -201,7 +203,36 @@ class Barra(object):
             value += self.cfg.grid_espaciado
             i += 1
 
-                # self.line(coord-1, coord+1, stroke_width=self.stw-10, stroke=color)
+    def tick(self):
+
+        y_pos_tick = self.y_fin_barra + 3
+
+        y_pos_texto = y_pos_tick + 7
+
+        value = 0
+        self.label_at_value(value, u'{:.0f}'.format(value), y_pos_texto, color=self.cfg.grid_color,
+                                font_size="12px")
+
+        value = self.cfg.vmax
+        self.label_at_value(value, u'{:.0f}'.format(value), y_pos_texto, color=self.cfg.grid_color,
+                                font_size="12px")
+
+        i = 0
+        value = 0
+        while value <= self.cfg.vmax:
+
+            coord = self.x_coord(value)
+            ini = (coord, y_pos_tick + 2)
+            fin = (coord, y_pos_tick + 4)
+
+            # self.line(coord - 1, coord + 1, stroke_width=self.stw, stroke=color, opacity=0.5)
+            line = self.dwg.line(ini, fin,
+                                 stroke_width=2, stroke=self.cfg.grid_color,
+                                 opacity=0.5)
+            self.dwg.add(line)
+
+            value += self.cfg.grid_espaciado
+            i += 1
 
     def title(self, value, text, color='black'):
         t = self.dwg.text(text, insert=(self.xorigen, self.y_cen_barra-15), fill=color, font_family="sans-serif", font_size="14px")
@@ -216,7 +247,6 @@ class Barra(object):
         # coords = (self.xorigen, self.y_cen_barra + self.cfg.alto_barra)
         t = self.dwg.text(text, insert=coords, fill=color, font_family="sans-serif", font_size=font_size, text_anchor=text_anchor)
         self.dwg.add(t)
-
 
     # def name(self, text1, text2, color='black'):
     #     t = self.dwg.text(text1, insert=(self.xorigen, self.y_cen_barra-15), fill=color, font_family="sans-serif", font_size="14px")
